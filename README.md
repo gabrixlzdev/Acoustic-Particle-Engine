@@ -18,15 +18,18 @@ Designed around **Data-Oriented Design (DOD)** and CPU cache locality rather tha
 - **Rendering:** SFML 2.6.2 (fetched and linked statically via CMake `FetchContent`)
 - **Testing:** CTest
 
-## Build & Run
+## Build, Test & Run
 
 ```powershell
 # 1. Configure CMake and fetch dependencies
 cmake -B build -G Ninja
 
-# 2. Compile all modules and the main executable
+# 2. Compile all modules, tests, and the main executable
 cmake --build build
 
-# 3. Run the simulation
+# 3. Run automated unit tests
+ctest --test-dir build --output-on-failure
+
+# 4. Run the simulation
 .\build\AcousticParticleEngine.exe
 ```

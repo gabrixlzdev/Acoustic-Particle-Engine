@@ -1,4 +1,5 @@
 #include <SFML/Graphics.hpp>
+#include "TimeStepAccumulator.hpp"
 
 int main() {
     // Compile-time constants (zero runtime memory overhead)
@@ -12,8 +13,17 @@ int main() {
     );
     window.setFramerateLimit(60);
 
+    //Create accumulator and clock on the stack
+
+    sf::Clock frameClock; // Clock to measure frame time
+    ape::TimeStepAccumulator timeAccumulator{};
+
     // Main application loop
     while (window.isOpen()) {
+        // Measure the elapsed frame time and feed accumulator
+        const float frameTime = frameClock.restart().asSeconds();
+        timeAccumulator.addFrameTime(frameTime);
+
         sf::Event event{};
         while (window.pollEvent(event)) {
             if (event.type == sf::Event::Closed) {
@@ -22,6 +32,11 @@ int main() {
             if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) {
                 window.close();
             }
+        }
+
+        while (timeAccumulator.consumeStep()){
+            const float dt = timeAccumulator.fixedDeltaTime;
+            (void) dt; // Placeholder for step 4 physics solver
         }
 
         // Clear back-buffer with a dark background (RGB: 15, 17, 26)

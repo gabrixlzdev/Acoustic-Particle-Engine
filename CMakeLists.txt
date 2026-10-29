@@ -41,3 +41,12 @@ target_link_libraries(AcousticParticleEngine PRIVATE Physics Graphics)
 
 # Enable CTest for automated unit and integration testing
 enable_testing()
+
+#compile tests/test_timestep.cpp into TestTimeStep.exe
+add_executable(TestTimeStep tests/test_timestep.cpp)
+
+#link core so the test knows where the "src/" folder is
+target_link_libraries(TestTimeStep PRIVATE Core)
+
+# Register TestTimeStep.exe with CTest so "ctest" runs it automatically
+add_test(NAME TimeStepAccumulatorTest COMMAND TestTimeStep)
