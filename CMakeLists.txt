@@ -59,3 +59,13 @@ target_link_libraries(TestVec2 PRIVATE Core)
 
 # Register TestVec2.exe with CTest so "ctest" runs it automatically
 add_test(NAME Vec2Test COMMAND TestVec2)
+
+#compile tests/test_particles.cpp into TestParticles.exe
+add_executable(TestParticles tests/test_particles.cpp)
+
+#link physics so the test knows where the "src/" folder is
+target_link_libraries(TestParticles PRIVATE Physics)
+
+# Register TestParticles.exe with CTest so "ctest" runs it automatically
+add_test(NAME ParticleSystemTest COMMAND TestParticles)
+
