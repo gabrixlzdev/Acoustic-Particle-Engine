@@ -69,3 +69,11 @@ target_link_libraries(TestParticles PRIVATE Physics)
 # Register TestParticles.exe with CTest so "ctest" runs it automatically
 add_test(NAME ParticleSystemTest COMMAND TestParticles)
 
+# Compile tests/test_verlet.cpp into TestVerlet.exe
+add_executable(TestVerlet tests/test_verlet.cpp)
+
+# Link Physics module (which also includes Core)
+target_link_libraries(TestVerlet PRIVATE Physics)
+
+# Register TestVerlet.exe with CTest automated runner
+add_test(NAME VerletSolverTest COMMAND TestVerlet)
