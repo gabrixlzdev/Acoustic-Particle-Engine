@@ -50,3 +50,12 @@ target_link_libraries(TestTimeStep PRIVATE Core)
 
 # Register TestTimeStep.exe with CTest so "ctest" runs it automatically
 add_test(NAME TimeStepAccumulatorTest COMMAND TestTimeStep)
+
+#compile tests/test_vec2.cpp into TestVec2.exe
+add_executable(TestVec2 tests/test_vec2.cpp)
+
+#link core so the test knows where the "src/" folder is
+target_link_libraries(TestVec2 PRIVATE Core)
+
+# Register TestVec2.exe with CTest so "ctest" runs it automatically
+add_test(NAME Vec2Test COMMAND TestVec2)
