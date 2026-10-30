@@ -1,5 +1,10 @@
 #include <SFML/Graphics.hpp>
-#include "TimeStepAccumulator.hpp"
+#include <random>
+
+#include "App/TimeStepAccumulator.hpp"
+#include "Physics/ParticleSystem.hpp"
+#include "Physics/VerletSolver.hpp"
+#include "Graphics/BatchRenderer.hpp"
 
 int main() {
     // Compile-time constants (zero runtime memory overhead)
@@ -18,6 +23,28 @@ int main() {
     sf::Clock frameClock; // Clock to measure frame time
     ape::TimeStepAccumulator timeAccumulator{};
 
+    // Physics solver & Particle System
+    constexpr std::size_t NUM_PARTICLES = 1000;
+    ape::ParticleSystem particles{NUM_PARTICLES};
+    ape::VerletSolver solver{};
+
+    //Graphics Batch Renderer
+    ape::BatchRenderer renderer;
+
+    //spawn 1000 particles randomly across the top of the window
+    std::mt19937 rng(42); // deterministic random seed
+    std::uniform_real_distribution<float> posX(20.0f,static_cast<float>(WINDOW_WIDTH) - 20.0f);
+    std::uniform_real_distribution<float> posY(20.0f,300.0f);
+    std::uniform_real_distribution<float> radius(2.0f,4.0f);
+    
+
+
+    for (std::size_t i = 0; i < NUM_PARTICLES; ++i)
+    {
+        particles.addParticle({posX(rng),posY(rng)}, radius(rng));
+    }
+    
+
     // Main application loop
     while (window.isOpen()) {
         // Measure the elapsed frame time and feed accumulator
@@ -35,12 +62,21 @@ int main() {
         }
 
         while (timeAccumulator.consumeStep()){
-            const float dt = timeAccumulator.fixedDeltaTime;
-            (void) dt; // Placeholder for step 4 physics solver
+            solver.update(
+                particles,
+                timeAccumulator.fixedDeltaTime,
+                static_cast<float>(WINDOW_WIDTH),
+                static_cast<float>(WINDOW_HEIGHT)
+            );
         }
+
+        //Render: sync vertex buffer and draw in 1 single call
+        renderer.update(particles.positions, particles.radii);
 
         // Clear back-buffer with a dark background (RGB: 15, 17, 26)
         window.clear(sf::Color(15, 17, 26));
+
+        renderer.draw(window); // Sends all 1,000 particles to the screen in 1 single draw call!
 
         // Present the rendered frame to the screen (Double Buffering)
         window.display();

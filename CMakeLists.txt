@@ -77,3 +77,12 @@ target_link_libraries(TestVerlet PRIVATE Physics)
 
 # Register TestVerlet.exe with CTest automated runner
 add_test(NAME VerletSolverTest COMMAND TestVerlet)
+
+# Compile tests/test_renderer.cpp into TestRenderer.exe
+add_executable(TestRenderer tests/test_renderer.cpp)
+
+# Link Graphics module (which includes Core + SFML)
+target_link_libraries(TestRenderer PRIVATE Graphics)
+
+# Register TestRenderer.exe with CTest
+add_test(NAME BatchRendererTest COMMAND TestRenderer)
