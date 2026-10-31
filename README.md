@@ -6,6 +6,10 @@ Based on acoustic radiation force theory and experimental standing wave levitato
 
 ---
 
+![Acoustic Levitation Simulation Demo](assets/demo.gif)
+
+---
+
 ## Key Features
 
 - **Acoustic Levitation Physics:** Implements the Gor'kov acoustic radiation force:
@@ -19,6 +23,7 @@ Based on acoustic radiation force theory and experimental standing wave levitato
 - **Verlet Numerical Integration:** Time-reversible Störmer-Verlet solver with Stokes viscous air drag damping.
 - **Spatial Partitioning ($O(N)$ Uniform Grid):** Reduces particle-particle collision complexity from $O(N^2)$ to $O(N)$ using flat contiguous memory lookup.
 - **GPU Batch Rendering:** Renders thousands of particles and wave fields in single draw calls via `sf::VertexArray`.
+- **Live On-Screen Display (HUD):** Telemetry showing particle count and acoustic field status, alongside interactive keyboard controls.
 
 ---
 
@@ -29,7 +34,7 @@ Designed around **Data-Oriented Design (DOD)** and CPU cache locality rather tha
 - **`Core/`**: Pure mathematical utilities (`Vec2`) and zero-overhead data structures (zero external dependencies).
 - **`Physics/`**: Struct of Arrays (SoA) particle memory layout (`ParticleSystem`), Verlet solver (`VerletSolver`), uniform spatial grid (`Grid`), and acoustic radiation force equations (`AcousticField`). Isolated from graphics.
 - **`Graphics/`**: Encapsulates SFML and implements single-draw-call GPU batch rendering (`BatchRenderer`) for particles and acoustic wave interference overlays.
-- **`App/`**: Manages the application window, keyboard interaction, and fixed-timestep orchestration.
+- **`App/`**: Manages the application window, live HUD text, keyboard interaction, and fixed-timestep orchestration.
 
 ---
 
@@ -63,5 +68,8 @@ ctest --test-dir build --output-on-failure
 ## Interactive Controls
 
 - **`Spacebar`**: Toggle acoustic levitation field **ON / OFF** (observe particles float in acoustic nodes vs. collapse under gravity).
-- **`R`**: Respawn and scatter particles across the chamber.
+- **`Up Arrow (↑)`**: Add **+50 particles** into the simulation in real time.
+- **`Down Arrow (↓)`**: Remove **-50 particles** from the simulation.
+- **`C`**: Toggle particle visibility **ON / OFF** (hides particles to clearly inspect the pure wave interference field).
+- **`R`**: Reset and respawn default particles across the chamber.
 - **`Esc`**: Exit the simulation.
