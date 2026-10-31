@@ -5,6 +5,7 @@
 #include "Physics/ParticleSystem.hpp"
 #include "Physics/VerletSolver.hpp"
 #include "Graphics/BatchRenderer.hpp"
+#include "Physics/Grid.hpp"
 
 int main() {
     // Compile-time constants (zero runtime memory overhead)
@@ -27,6 +28,10 @@ int main() {
     constexpr std::size_t NUM_PARTICLES = 1000;
     ape::ParticleSystem particles{NUM_PARTICLES};
     ape::VerletSolver solver{};
+
+    //create grid;    
+    ape::Grid grid;
+    grid.init(static_cast<float>(WINDOW_WIDTH), static_cast<float>(WINDOW_HEIGHT), 16.0f);
 
     //Graphics Batch Renderer
     ape::BatchRenderer renderer;
@@ -62,11 +67,14 @@ int main() {
         }
 
         while (timeAccumulator.consumeStep()){
+            grid.clear();
+            grid.populate(particles.positions);
             solver.update(
-                particles,
-                timeAccumulator.fixedDeltaTime,
-                static_cast<float>(WINDOW_WIDTH),
-                static_cast<float>(WINDOW_HEIGHT)
+             particles,
+             grid,
+             timeAccumulator.fixedDeltaTime,
+             static_cast<float>(WINDOW_WIDTH),
+             static_cast<float>(WINDOW_HEIGHT)
             );
         }
 

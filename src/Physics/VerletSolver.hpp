@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <cstddef>
 #include "Physics/ParticleSystem.hpp"
+#include "Grid.hpp"
 
 //
 // x_{n+1} = 2*x_n - x_n + a_n * dt^2 --> verlet solver or verlet integration
@@ -62,10 +63,75 @@ namespace ape{
             }
         }
 
-        void update(ParticleSystem& particles, float dt, float widht, float height) const noexcept{
+        void update(ParticleSystem& particles, const Grid& grid, float dt, float widht, float height) const noexcept{
             applyGravity(particles);
             integrate(particles, dt);
+            solveCollisions(particles,grid);
             solveBoundaryCollisions(particles, widht, height);
+            
         }
+
+
+        // Solve particle-particle collisions using the spatial grid (O(N) complexity)
+    void solveCollisions(ParticleSystem& particles, const Grid& grid) const noexcept 
+    {
+        const std::size_t count = particles.size();
+
+        for (std::size_t i = 0; i < count; ++i) {
+            const Vec2 posI = particles.positions[i];
+            const float radiusI = particles.radii[i];
+
+            // 1. Find grid cell coordinates for particle i
+            const auto cellX = static_cast<int>(std::max(0.0f, posI.x) / grid.cellSize); //find column 
+            const auto cellY = static_cast<int>(std::max(0.0f, posI.y) / grid.cellSize); //find row
+
+            // 2. Check 3x3 neighboring cells (-1 to +1 in X and Y)
+            for (int dy = -1; dy <= 1; ++dy) {
+                for (int dx = -1; dx <= 1; ++dx) {
+                    const int nx = cellX + dx;
+                    const int ny = cellY + dy;
+                    //dx and dy go from −1 to +1, visiting all 9 cells. 
+                    //Any particle outside these 9 cells is too far away to physically touch particle i!
+
+                    // Skip cells outside the screen grid boundaries
+                    if (nx < 0 || nx >= static_cast<int>(grid.gridWidth) ||
+                        ny < 0 || ny >= static_cast<int>(grid.gridHeight)) {
+                        continue;
+                    }
+                    
+                    //index = y*width + x
+                    const std::size_t neighborCellIdx = static_cast<std::size_t>(ny) * grid.gridWidth + static_cast<std::size_t>(nx);
+                    const auto& candidateIndices = grid.cells[neighborCellIdx];
+
+                    // 3. Check collision against particles in this neighbor cell
+                    for (std::size_t j : candidateIndices) {
+                        // Avoid self-collision and duplicate checks (only check if i < j)
+                        if (i >= j) {
+                            continue;
+                        }
+
+                        const Vec2 delta = particles.positions[i] - particles.positions[j]; // vector j->i
+                        const float distSq = delta.lengthSquared(); //d^2 = (r_i + r_j)^2
+                        const float minDistance = radiusI + particles.radii[j];
+
+                        // If distance squared < (r1 + r2)^2, particles are overlapping!
+                        if (distSq < minDistance * minDistance && distSq > 1e-8f) {
+                            const float dist = std::sqrt(distSq); // = d
+                            const float overlap = minDistance - dist; // how deep they penetrated into each other (delta)
+                            const Vec2 normal = delta * (1.0f / dist); // unit vector lenght = 1 pointing from j to i.
+
+                            // Push particles apart along the collision normal
+                            //Since both particles have equal mass, each particle moves half of the overlap:
+                            const Vec2 separation = normal * (0.5f * overlap); 
+                            particles.positions[i] += separation; // particle i is pushed foreard along +normal vector
+                            particles.positions[j] -= separation; // particle j is pushed foreard along -normal vector
+                        }
+                    }
+                }
+            }
+        }
+    }
     };
+
+    
 }

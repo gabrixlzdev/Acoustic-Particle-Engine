@@ -86,3 +86,9 @@ target_link_libraries(TestRenderer PRIVATE Graphics)
 
 # Register TestRenderer.exe with CTest
 add_test(NAME BatchRendererTest COMMAND TestRenderer)
+
+# Compile tests/test_grid.cpp into TestGrid.exe
+add_executable(TestGrid tests/test_grid.cpp)
+target_link_libraries(TestGrid PRIVATE Physics)
+add_test(NAME GridTest COMMAND TestGrid)
+
