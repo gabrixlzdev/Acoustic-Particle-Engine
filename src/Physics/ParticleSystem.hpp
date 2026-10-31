@@ -17,6 +17,8 @@ namespace ape {
         explicit ParticleSystem(std::size_t maxParticles = 0){
             reserve(maxParticles); // Reserve memory for the specified number of particles
         }
+
+        //.reserve is a funcition of vector for optimization
         
         // Reserve memory for the specified number of particles
         void reserve(std::size_t capacity){

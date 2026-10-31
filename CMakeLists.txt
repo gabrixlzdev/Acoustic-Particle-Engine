@@ -92,3 +92,7 @@ add_executable(TestGrid tests/test_grid.cpp)
 target_link_libraries(TestGrid PRIVATE Physics)
 add_test(NAME GridTest COMMAND TestGrid)
 
+# Compile tests/test_acoustic.cpp into TestAcoustic.exe
+add_executable(TestAcoustic tests/test_acoustic.cpp)
+target_link_libraries(TestAcoustic PRIVATE Physics)
+add_test(NAME AcousticFieldTest COMMAND TestAcoustic)
