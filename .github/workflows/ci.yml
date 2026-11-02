@@ -1,0 +1,45 @@
+# ==============================================================================
+# GitHub Actions CI Workflow: Acoustic Particle Engine
+#
+# Automatically builds the C++20 targets and executes the CTest unit test suite
+# on every push to the main branch or incoming pull request.
+# ==============================================================================
+
+name: CI (C++20 Build & Automated Tests)
+
+# Trigger workflow on pushes and pull requests targeting the main branch
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    name: Windows (GCC / C++20 / CTest)
+    # Target runner environment matching our local Windows development toolchain
+    runs-on: windows-latest
+
+    steps:
+      # Step 1: Check out repository source code onto the virtual runner
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Step 2: Install and configure modern CMake and Ninja build generator
+      - name: Set up CMake and Ninja
+        uses: lukka/get-cmake@latest
+
+      # Step 3: Configure CMake with Ninja in Release mode (-O3 optimizations).
+      # CMake automatically fetches and compiles static SFML 2.6.2 via FetchContent.
+      - name: Configure CMake
+        run: cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
+
+      # Step 4: Compile all internal modular libraries (Core, Physics, Graphics)
+      # and build the main application executable alongside the test suites.
+      - name: Build all targets and test executables
+        run: cmake --build build --config Release
+
+      # Step 5: Execute all 7 CTest automated unit test suites.
+      # If any assertion fails, the run stops and outputs detailed failure logs.
+      - name: Run CTest test suite
+        run: ctest --test-dir build --output-on-failure -C Release

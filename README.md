@@ -1,5 +1,7 @@
 # Acoustic Particle Engine
 
+[![CI](https://github.com/gabrixlzdev/Acoustic-Particle-Engine/actions/workflows/ci.yml/badge.svg)](https://github.com/gabrixlzdev/Acoustic-Particle-Engine/actions/workflows/ci.yml)
+
 A high-performance 2D real-time physics simulation of acoustic waves, particle interactions, and acoustic levitation built in **modern C++20** and rendered with **SFML** using **Data-Oriented Design (DOD)**.
 
 Based on acoustic radiation force theory and experimental standing wave levitators (e.g., Andrade et al., *Revista Brasileira de Ensino de Física*, 2015).
