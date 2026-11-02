@@ -73,3 +73,10 @@ ctest --test-dir build --output-on-failure
 - **`C`**: Toggle particle visibility **ON / OFF** (hides particles to clearly inspect the pure wave interference field).
 - **`R`**: Reset and respawn default particles across the chamber.
 - **`Esc`**: Exit the simulation.
+
+---
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
